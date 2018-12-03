@@ -11,135 +11,6 @@ let s:cpo_save=&cpo
 set cpo&vim
 " }}}
 
-" prev: function! s:_get_cachedict_key()
-" prev: 	return printf( '%s:%s', &filetype, &syntax )
-" prev: endfunction
-" prev: 
-" prev: function! evplg#snippets#scope#vim#init_lazy()
-" prev: 	let l:scope_cachedict_key = s:_get_cachedict_key()
-" prev: 	if get( b:, 'evplg_snippets_current_cachedict_key', '' ) ==# l:scope_cachedict_key
-" prev: 		return
-" prev: 	endif
-" prev: 	unlet! b:evplg_snippets_current_cachedict_key
-" prev: 
-" prev: 	" TODO: have a "changedtick"-sortof-based global definitions, which can be
-" prev: 	" manually reset (and thus its "changedtick" would be increased, thus
-" prev: 	" triggering refreshing from every buffer's snippets when those are used).
-" prev: 	"
-" prev: 	" TODO: move to another function (possibly 'evplg#snippets#baselib#*()') {{{
-" prev: 	if ( ! exists( 'g:evplg_snippets_scopes_specdict' ) )
-" prev: 		" TODO: implement registration?
-" prev: 		let g:evplg_snippets_scopes_specdict = {}
-" prev: 	endif
-" prev: 	if ( ! exists( 'g:evplg_snippets_scopes_procdict' ) )
-" prev: 		let g:evplg_snippets_scopes_procdict = {}
-" prev: 	endif
-" prev: 	if ( ! exists( 'b:evplg_snippets_scopes_cachedict' ) )
-" prev: 		let b:evplg_snippets_scopes_cachedict = {}
-" prev: 	endif
-" prev: 	" }}}
-" prev: 
-" prev: 	" re-generate the entry in 'b:evplg_snippets_scopes_cachedict' if needed
-" prev: 	if ( ! has_key( b:evplg_snippets_scopes_cachedict, l:scope_cachedict_key ) )
-" prev: 		let l:runtime_spec_pref = 'evplg/snippets/init/scopes/'
-" prev: 		let l:scopes_list = evlib#strset#AsList( evlib#strset#Add( evlib#strset#Create( split( l:scope_cachedict_key, '\W' ) ), [ 'all' ] ) )
-" prev: 		" echomsg 'DEBUG: l:scopes_list=' . string( l:scopes_list )
-" prev: 		for l:scope_now in l:scopes_list
-" prev: 			if ! has_key( g:evplg_snippets_scopes_procdict, l:scope_now )
-" prev: 				let g:evplg_snippets_scopes_procdict[ l:scope_now ] = {}
-" prev: 			endif
-" prev: 			let l:scope_procdict = g:evplg_snippets_scopes_procdict[ l:scope_now ]
-" prev: 			if ( ! get( l:scope_procdict, 'done_runtime', 0 ) )
-" prev: 				" do a 'runtime' on the appropriately named files:
-" prev: 				"  (something like: runtime! evplg/snippets/scopes/SCOPE{[-_]*,}.vim)
-" prev: 				" prev: \ 'evlib#compat#fnameescape( printf(''%s%s%s.vim'', l:runtime_spec_pref, l:scope_now, v:val ) )'
-" prev: 				let l:runtime_specs_now = join(
-" prev: 							\		map(
-" prev: 							\				[
-" prev: 							\					'',
-" prev: 							\					'[-_]*',
-" prev: 							\				],
-" prev: 							\				'printf(''%s%s%s.vim'', l:runtime_spec_pref, l:scope_now, v:val )'
-" prev: 							\			),
-" prev: 							\		' '
-" prev: 							\	)
-" prev: 				try
-" prev: 					" prev: " flag that this is done before actually doing it, so we cope
-" prev: 					" prev: " with bad scripts/errors by not re-'runtime'-ing them
-" prev: 					" prev: " repeteadly.
-" prev: 					" prev: let l:scope_procdict[ 'done_runtime' ] = !0
-" prev: 					" echomsg 'DEBUG: about to run runtime! ' . l:runtime_specs_now
-" prev: 					execute 'runtime! ' . l:runtime_specs_now
-" prev: 				catch
-" prev: 					echomsg 'ERROR: lazy_init(): caught exception sourcing script. exception=' . string( v:exception ) . '; location=' . stirng( v:throwpoint )
-" prev: 				finally
-" prev: 					" flag the "scope" as having been dealt with, even when
-" prev: 					" there was an error, so we avoid re-'runtime'-ing buggy
-" prev: 					" or unlucky scripts repeatedly.
-" prev: 					let l:scope_procdict[ 'done_runtime' ] = !0
-" prev: 				endtry
-" prev: 			endif
-" prev: 		endfor
-" prev: 
-" prev: 		" now we make a new cache entry in b:evplg_snippets_scopes_cachedict,
-" prev: 		" so that the 'init_functions' elements can use the (TODO: implement)
-" prev: 		" functions that work on the current cache entry.
-" prev: 		let b:evplg_snippets_scopes_cachedict[ l:scope_cachedict_key ] = {}
-" prev: 		let b:evplg_snippets_current_cachedict_key = l:scope_cachedict_key
-" prev: 
-" prev: 		" call the 'init_functions' registered by the runtime scripts in the
-" prev: 		" previous loop.
-" prev: 		" prev: " FIXME: re-add later: for l:scope_now in l:scopes_list
-" prev: 		" prev: for l:scope_now in [] " FIXME: code inside the 'for' disabled for now
-" prev: 		for l:scope_now in l:scopes_list
-" prev: 			" prev: " prev: if ! has_key( b:evplg_snippets_scopes_procdict, l:scope_now )
-" prev: 			" prev: " prev: 	let b:evplg_snippets_scopes_procdict[ l:scope_now ] = {}
-" prev: 			" prev: " prev: endif
-" prev: 			" prev: " prev: let l:scope_procdict = b:evplg_snippets_scopes_procdict[ l:scope_now ]
-" prev: 			let l:scope_procdict = g:evplg_snippets_scopes_procdict[ l:scope_now ]
-" prev: 			" prev: " prev: if ( ! get( l:scope_procdict, 'done_init_functions', 0 ) )
-" prev: 			" prev: " TODO: instead: if ( ! evplg#snippets#baselib#scopecache#get_cached_value( 'done_init_functions', 0 ) )
-" prev: 			" prev: if ( ! evplg#snippets#baselib#scopecache#get_cached_value( '*done_init_functions', 0 ) )
-" prev: 			if !0
-" prev: 				" TODO: implement a priority-based list of 'init_functions',
-" prev: 				" so that we can execute a final list with the priority being
-" prev: 				" the primary key, and the relative order of "scopes" as a
-" prev: 				" likely secondary order (or just define the order to be
-" prev: 				" arbitrary between entries with the same priority).
-" prev: 				"  IDEA: populate a list/dict/whatever with a priority, and
-" prev: 				"  have a loop later to iterate through those
-" prev: 				"   IDEA: have a priority-based collection (or a generically
-" prev: 				"   sorted collection) in 'evlib'.
-" prev: 				"   IDEA: or just add elements to a priority-keyed dict (where
-" prev: 				"   each element is a list), and then write the resulting list
-" prev: 				"   iterating in sorted key order.
-" prev: 				"    IDEA: this can still be in evlib...
-" prev: 				"     evlib#keyedmlist#Create()
-" prev: 				"     evlib#keyedmlist#Add(keyedmlist, key, val) " to be used by 'registration' functions
-" prev: 				"     evlib#keyedmlist#Extend(keyedmlist, srcdst, srctoadd) " to update the priority list for every scope in the loop
-" prev: 				"     evlib#keyedmlist#GetFlat(keyedmlist, ... ) " opt: sortfunction (see ':h sort()') -- to get the final list of functions/funcrefs to call, in priority order
-" prev: 				for l:buffer_init_func_orig in get( l:scope_procdict, 'init_functions', [] )
-" prev: 					unlet! l:Buffer_init_func
-" prev: 					let l:Buffer_init_func = l:buffer_init_func_orig
-" prev: 					unlet l:buffer_init_func_orig
-" prev: 					try
-" prev: 						call call( l:Buffer_init_func, [ l:scope_now ] )
-" prev: 					catch
-" prev: 						echomsg 'ERROR: lazy_init(): caught exception executing initialisation function '
-" prev: 									\	. string( l:Buffer_init_func )
-" prev: 									\	'. exception=' . string( v:exception ) . '; location=' . string( v:throwpoint )
-" prev: 					endtry
-" prev: 				endfor
-" prev: 				" prev: " prev: let l:scope_procdict[ 'done_init_functions' ] = !0
-" prev: 				" prev: call evplg#snippets#baselib#scopecache#set_cached_value( '*done_init_functions', !0 )
-" prev: 			endif
-" prev: 		endfor
-" prev: 		"? let l:specdict_now = l:scope_specdict[ l:scope_now ]
-" prev: 		"? if ! has_key( l:scope_specdict, l:scope_now ) | continue | endif
-" prev: 	endif
-" prev: endfunction
-
-" TODO: complete
 let s:local_keywordflavours_dict_function_short = {
 			\		'function': 'fu',
 			\		'endfunction': 'endf',
@@ -188,12 +59,6 @@ function! s:local_create_keywordflavours_dict_long_from_short( src_keywords_dict
 				\	)
 endfunction
 
-" prev: " for now, each element's value matches its key, which is (by our convention)
-" prev: " the "long" version.
-" prev: let s:local_keywordflavours_dict_function_long = map(
-" prev: 			\		deepcopy( s:local_keywordflavours_dict_function_short ),
-" prev: 			\		'v:key'
-" prev: 			\	)
 for [ s:local_tmp_keywordflavours_dict_varname_dst, s:local_tmp_keywordflavours_dict_varname_src ]
 			\	in [
 			\			[
@@ -220,11 +85,6 @@ function! s:local_extenddicts( dict_dst, dicts, ... )
 endfunction
 
 function! s:local_keywordpopulatedict_short( keywords_dict )
-	" prev: call extend(
-	" prev: 			\		a:keywords_dict,
-	" prev: 			\		s:local_keywordflavours_dict_function_short,
-	" prev: 			\		"force"
-	" prev: 			\	)
 	call s:local_extenddicts(
 				\		a:keywords_dict,
 				\		[
@@ -237,11 +97,6 @@ function! s:local_keywordpopulatedict_short( keywords_dict )
 endfunction
 
 function! s:local_keywordpopulatedict_long( keywords_dict )
-	" prev: call extend(
-	" prev: 			\		a:keywords_dict,
-	" prev: 			\		s:local_keywordflavours_dict_function_long,
-	" prev: 			\		"force"
-	" prev: 			\	)
 	call s:local_extenddicts(
 				\		a:keywords_dict,
 				\		[
@@ -253,11 +108,6 @@ function! s:local_keywordpopulatedict_long( keywords_dict )
 	return !0
 endfunction
 
-" prev: " prev: let s:local_keyworddetection_search_function_regex = '\v^\s*<(fu%[nction])>'
-" prev: let s:local_keyworddetection_search_function_regex = '\v^\s*<(fu%[nctio])|(function)>'
-" TODO: let s:local_keyworddetection_search_others01_regex = '\v^\s*<(fu%[nction])>'
-
-" prev: \			'regex': s:local_keyworddetection_search_function_regex,
 let s:local_keyworddetection_proclist = [
 			\		{
 			\			'search_regex': '\v^\s*<%((fu%[nctio])|(function))>',
@@ -287,10 +137,6 @@ function! s:local_keywordpopulatedict_detect( keywords_dict )
 						\		l:regex_now,
 						\		'bnpw'
 						\	)
-			" prev: if has_key( l:proc_elem_now, 'keywords_dict_map' )
-			" prev: 			\	&& has_key( l:proc_elem_now[ 'keywords_dict_map' ], l:subpattern_number )
-			" prev: 	" ref: l:subpattern_number
-			" prev: endif
 			if l:subpattern_number > 0
 				let l:matched_element_flag = !0
 				if has_key( l:proc_elem_now, 'search_keywords_dict_map' )
@@ -359,8 +205,6 @@ function! evplg#snippets#scope#vim#init_lazy()
 	"      we won't be doing a multi-line search several times per snippet,
 	"      for example.
 	"       IDEA: or use a time-based cache? (maybe not)
-	" prev: let l:keyword_dict_final = evplg#snippets#baselib#scopecache#get_cached_value( 'keyword_dict_final', s:local_any_def )
-	" prev: if l:keyword_dict_final isnot s:local_any_def
 	if ( ! evplg#snippets#baselib#scopecache#get_cached_value( 'keyword_dict_is_final', 0 ) )
 		let l:keyword_dict = {}
 		let l:keywordflavours = evlib#stdtype#AsTopLevelList(
@@ -404,7 +248,6 @@ endfunction
 
 function! evplg#snippets#scope#vim#keyword( keyword )
 	call evplg#snippets#scope#vim#init_lazy()
-	" prev: return a:keyword
 	return get(
 				\		evplg#snippets#baselib#scopecache#get_cached_value(
 				\				'keyword_dict',
