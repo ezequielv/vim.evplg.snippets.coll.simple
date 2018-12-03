@@ -1,0 +1,7 @@
+#? snipmate-only: #+ version 1
+
+snippet vmk "make snippet: keyword (evplg.snippets.*)"
+	\`evplg#snippets#scope#vim#keyword('${0:${VISUAL}}')\`
+
+snippet mt "make snippet: test (no backslashes)"
+	test_prefix:${0:${VISUAL}}:test_suffix
