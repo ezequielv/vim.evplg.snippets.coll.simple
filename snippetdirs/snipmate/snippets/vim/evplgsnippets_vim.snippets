@@ -1,0 +1,108 @@
+# prev: # NOTE: this file was named 'vim_evplgsnippets.snippets', but ultisnips did not find it.
+# prev: #  NOTE: so now the file is simply 'vim.snippets'
+# TODO: create an ultisnips "port" of every snippet in this file
+version 1
+
+#+ snippet fun "function (long keywords)"
+#+ 	function! ${1:`evplg#snippets#scope#vim#get_default_function_prefix()`}${2:function_name}(${3})
+#+ 		${0}
+#+ 	endfunction
+snippet fun function (long keywords)
+	function!${1: `evplg#snippets#scope#vim#get_default_function_prefix()`}${2:function_name}(${3})
+		${0}
+	endfunction
+
+snippet fu function (short keywords)
+	fu!${1: `evplg#snippets#scope#vim#get_default_function_prefix()`}${2:function_name}(${3})
+		${0}
+	endf
+
+snippet! f function (alias)
+	function
+
+# FIXME: ultisnips does not seem to cope with:
+#  * 'snippet!': the following line yields an error:
+#    * snippet! f "function (smart)"
+#  * 'version':  the following line yields an error:
+#    * version 1
+#+ snippet! f "function (smart)"
+#+ 	`evplg#snippets#scope#vim#keyword('function')`! ${1:`evplg#snippets#scope#vim#get_default_function_prefix()`}${2:function_name}(${3})
+#+ 		${0}
+#+ 	`evplg#snippets#scope#vim#keyword('endfunction')`
+# prev: # autoconversion-snippet-out-ids: snipmate-compat ultisnips
+#+? # autoconversion-snippet-out-ids: ultisnips.snipmate
+# autoconversion-snippet-out-ids: ultisnips
+# autoconversion-snippet-fmt-ultisnips-flags: b
+snippet! function function (smart)
+	`evplg#snippets#scope#vim#keyword('function')`!${1: `evplg#snippets#scope#vim#get_default_function_prefix()`}${2:function_name}(${3})
+		${0}
+	`evplg#snippets#scope#vim#keyword('endfunction')`
+
+snippet! t try ... catch statement (alias)
+	try
+
+snippet! try try ... catch statement (smart)
+	`evplg#snippets#scope#vim#keyword('try')`
+		${1:${VISUAL}}
+	`evplg#snippets#scope#vim#keyword('catch')` ${2}
+		${0}
+	`evplg#snippets#scope#vim#keyword('endtry')`
+
+# vim keyboard macro (ie., put it in reg 'a', for example) to make a 'long keyword' version out of a "smart" one
+# v1: {V}y}p{:.,/^$/ s/\v`evplg#snippets#scope#vim#keyword\(\s*'([^']+)'.{-}`/\1/g | nohlsearch
+# v2: {V}y}p{0EEaLA (long keywords)0:.,/^$/ s/\v`evplg#snippets#scope#vim#keyword\(\s*'([^']+)'.{-}`/\1/g | nohlsearch
+# v3: {V}y}p{0EEaL$F(DA(long keywords)0:.,/^$/ s/\v`evplg#snippets#scope#vim#keyword\(\s*'([^']+)'.{-}`/\1/g | nohlsearch
+
+# prev: snippet! f for ... in loop (alias)
+# prev: 	for
+
+snippet! for for ... in loop (smart)
+	`evplg#snippets#scope#vim#keyword('for')` ${1} in ${2}
+		${0:${VISUAL}}
+	`evplg#snippets#scope#vim#keyword('endfor')`
+
+snippet! forkv for [key, value] in loop (smart)
+	`evplg#snippets#scope#vim#keyword('for')` [${1},${2}] in items(${3})
+		${0}
+		`evplg#snippets#scope#vim#keyword('unlet')` $1 $2
+	`evplg#snippets#scope#vim#keyword('endfor')`
+
+snippet! w while loop (alias)
+	while
+
+snippet! wh while loop (alias)
+	while
+
+snippet! while while loop (smart)
+	`evplg#snippets#scope#vim#keyword('while')` ${1}
+		${0:${VISUAL}}
+	`evplg#snippets#scope#vim#keyword('endwhile')`
+
+snippet! if if statement (smart)
+	`evplg#snippets#scope#vim#keyword('if')` ${1}
+		${0:${VISUAL}}
+	`evplg#snippets#scope#vim#keyword('endif')`
+
+snippet! ife if ... else statement (smart)
+	`evplg#snippets#scope#vim#keyword('if')` ${1}
+		${2:${VISUAL}}
+	`evplg#snippets#scope#vim#keyword('else')`
+		${0}
+	`evplg#snippets#scope#vim#keyword('endif')`
+
+# single keywords:
+# note: some of them will have a trailing space to stop the autocompletion (if
+# any) to try to autocomplete the identifier.
+
+snippet! exe execute command (smart)
+	`evplg#snippets#scope#vim#keyword('execute')` 
+
+# fixes:
+
+#+ # NOTE: maybe use vim script (ex) code to emulate pressing <tab>
+#+ #  IDEA: install (in a 'post' script): a 'inoremap' to '<backslash><tab>' to expand to the same, only if the key to expand is indeed <tab>
+#+ snippet! \ "Fix: backslash-tab expanded to just that"
+#+ 	\\	
+snippet! \ "Fix: backslash-tab expanded to just that"
+	\\	
+
