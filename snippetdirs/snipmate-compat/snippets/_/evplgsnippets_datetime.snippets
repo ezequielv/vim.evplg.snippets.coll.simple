@@ -1,0 +1,36 @@
+
+snippet timewsec time "hh:mm:ss"
+	`strftime("%H:%M:%S")`
+#
+snippet datetimewsec "YYYY.MM.DD hh:mm:ss"
+	`strftime("%Y.%m.%d %H:%M:%S")`
+#
+# ref: https://www.w3.org/TR/NOTE-datetime
+
+# this overrides the one in 'vim-snippets/snippets/_.snippets'
+snippet date
+	`strftime("%Y.%m.%d")`
+# this overrides the one in 'vim-snippets/snippets/_.snippets'
+snippet datetime
+	`strftime("%Y.%m.%d %H:%M")`
+# this overrides the one in 'vim-snippets/snippets/_.snippets'
+snippet diso
+	`strftime("%Y-%m-%d")`
+snippet dtiso
+	`strftime("%Y-%m-%dT%H:%M:%S%z")`
+#
+# shortcuts {{{
+#? prev: v1: snippet dt dt -> datetimewsec
+#? prev: v1: 	datetimewsec
+snippet dt dt -> dtiso
+	dtiso
+snippet dts dts -> datetimewsec
+	datetimewsec
+# }}}
+
+snippet dateuk
+	`strftime("%d/%m/%Y")`
+snippet datetimeuk
+	`strftime("%d/%m/%Y %H:%M:%S %Z")`
+snippet tetimeuk
+	`strftime("%H:%M:%S %Z")`
