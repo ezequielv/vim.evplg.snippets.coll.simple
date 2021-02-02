@@ -16,3 +16,10 @@ snippet snippets_test_multi4 test: multi-line expansion (#4) backslash-backslash
 	${1:first} line: `join(['line1','line2','line3'], "\\n")` <- after last line
 	second field: ${2:second}
 
+#  NOTE: this is because snipmate and ultisnips seem to differ in the way in which they parse the backslashed string constants.
+#  MAYBE: investigate further to see if this function is needed at all?
+snippet snippets_test_multi5 test: multi-line expansion (#5) using esc(n)
+	before lines joined by evplg#snippets#baselib#valcommon#getesc('n'):
+	${1:first} line: `join(['line1','line2','line3','line4'], evplg#snippets#baselib#valcommon#getesc('n'))` <- after last line
+	second field: ${2:second}
+
