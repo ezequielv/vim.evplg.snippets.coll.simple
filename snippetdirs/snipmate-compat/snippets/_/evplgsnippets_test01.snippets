@@ -1,14 +1,18 @@
 
-snippet snippets_test_multi1 test: multi-line expansion (#1)
-	before first line: `join(['line1','line2','line3'], "\\n")` <- after last line
+snippet snippets_test_multi1 test: multi-line expansion (#1) backslash-n
+	before lines joined by one backslash-n:
+	first line: `join(['line1','line2','line3'], "\n")` <- after last line
 
-snippet snippets_test_multi2 test: multi-line expansion (#2)
-	before ${1:first} line: `join(['line1','line2','line3'], "\\n")` <- after ${2:last} line
+snippet snippets_test_multi2 test: multi-line expansion (#2) backslash-n
+	before lines joined by one backslash-n:
+	${1:first} line: `join(['line1','line2','line3'], "\n")` <- after ${2:last} line
 
-snippet snippets_test_multi3 test: multi-line expansion (#3)
-	before ${1:first} line: `join(['line1','line2 ${2:field2}','line3'], "\\n")` <- after ${3:last} line
+snippet snippets_test_multi3 test: multi-line expansion (#3) backslash-backslash-n
+	before lines joined by two backslashes-n:
+	${1:first} line: `join(['line1','line2 ${2:field2}','line3'], "\\n")` <- after ${3:last} line
 
-snippet snippets_test_multi4 test: multi-line expansion (#4)
-	before ${1:first} line: `join(['line1','line2','line3'], "\\n")` <- after last line
+snippet snippets_test_multi4 test: multi-line expansion (#4) backslash-backslash-n
+	before lines joined by two backslashes-n:
+	${1:first} line: `join(['line1','line2','line3'], "\\n")` <- after last line
 	second field: ${2:second}
 
