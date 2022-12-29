@@ -15,6 +15,7 @@ version 1
 #+ 	function! ${1:`evplg#snippets#scope#vim#get_default_function_prefix()`}${2:function_name}(${3})
 #+ 		${0}
 #+ 	endfunction
+# TODO: try to remove the space between ':' and the '`', so that we don't make it easy to create the wrong code
 snippet fun function (long keywords)
 	function!${1: `evplg#snippets#scope#vim#get_default_function_prefix()`}${2:function_name}(${3})
 		${0}
