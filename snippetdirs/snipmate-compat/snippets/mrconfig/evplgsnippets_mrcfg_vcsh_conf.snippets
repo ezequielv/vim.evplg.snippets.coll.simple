@@ -1,0 +1,43 @@
+
+# TODO: get the URL from a variable instead
+snippet repo_vcsh_manual mrconfig: vcsh repository
+	[$HOME/.config/vcsh/repo.d/${1:repo_basename}.git]
+	checkout = vcsh clone https://bitbucket.org/${2:ezequielv}/$1.git $1
+	skip = ${3:skip_dev} "\$1" ${4:git}
+
+# TODO: get the URL from a variable instead
+# TODO: use a function to calculate:
+#  - the repo "basename" from the current filename
+#  - the "type" ("vcsh", "confgit")
+#  - each component in the "ini" template code to be produced, so that the conditions are encapsulated inside viml script code
+# NOTE: use the technique shown in the snippet 'snippets_test_multi5' (file 'snipmate-compat/snippets/_/evplgsnippets_test01.snippets') (ie., first line ->`join(['line1','line2','line3','line4'], evplg#snippets#baselib#valcommon#getesc('n'))`<- after last line)
+#+ prev: v1: snippet repo_vcsh_auto mrconfig: vcsh repository
+#+ prev: v1: 	[$HOME/.config/vcsh/repo.d/${1:`expand('%:t:r')`}.git]
+#+ prev: v1: 	checkout = vcsh clone https://bitbucket.org/${2:ezequielv}/$1.git $1
+#+ prev: v1: 	skip = ${3:skip_dev} "\$1" ${4:git}
+
+#+? prev: v2: snippet repo_vcsh_auto mrconfig: vcsh repository
+#+? prev: v2: 	[${6:\$HOME/}${7:.config/vcsh/repo.d}/${1:`expand('%:t:r')`}.git]
+#+? prev: v2: 	checkout = vcsh clone ${2:https://bitbucket.org}/${3:ezequielv}/$1.git $1
+#+? prev: v2: 	skip = ${4:skip_dev} "\$1" ${5:git}
+
+#+? prev: v3: snippet repo_vcsh_auto mrconfig: vcsh repository
+#+? prev: v3: 	[${1:\$HOME/}${2:.config/vcsh/repo.d}/${3:`expand('%:t:r')`}.git]
+#+? prev: v3: 	checkout = vcsh clone ${4:https://bitbucket.org}/${5:ezequielv}/$3.git $3
+#+? prev: v3: 	skip = ${6:skip_dev} "\$1" ${7:git}
+
+snippet repo_vcsh_auto mrconfig: vcsh repository
+	[${1:\$HOME/}${2:.config/vcsh/repo.d}/${3:`expand('%:t:r')`}.git]
+	checkout = vcsh clone ${4:https://}${5:bitbucket.org}/${6:ezequielv}/$3.git $3
+	skip = ${7:skip_dev} "\$1" ${8:git}
+
+snippet repo_vcsh_dgroup_auto mrconfig: vcsh repository using 'vcsh_dgroups_clone'
+	[${1:\$HOME/}${2:.config/vcsh/repo.d}/${3:`expand('%:t:r')`}.git]
+	checkout = vcsh_dgroups_clone ${4:https://}${5:bitbucket.org}/${6:ezequielv}/$3.git $3${7: && vcsh_git_config_fnames_dos}
+	skip = ${8:skip_dev} "\$1" ${9:git}
+
+snippet repo_conf_git_auto mrconfig: standard git repository
+	[${1:\$HOME/}${2:directory}/${3:`expand('%:t:r')`}.git]
+	checkout = git clone ${4:https://}${5:github.com}/${6:ezequielv}/$3.git $3
+	skip = ${7:skip_dev} "\$1" ${8:git}
+
