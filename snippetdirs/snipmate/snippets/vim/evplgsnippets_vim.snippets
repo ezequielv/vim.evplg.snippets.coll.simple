@@ -99,10 +99,19 @@ snippet! exe execute command (smart)
 
 # fixes:
 
-#+ # NOTE: maybe use vim script (ex) code to emulate pressing <tab>
-#+ #  IDEA: install (in a 'post' script): a 'inoremap' to '<backslash><tab>' to expand to the same, only if the key to expand is indeed <tab>
+#? # NOTE: maybe use vim script (ex) code to emulate pressing <tab>
+#+ IDEA: install (in a 'post' script): a 'inoremap' to '<backslash><tab>' to expand to the same, only if the key to expand is indeed <tab>
+#   TODO: implement this, as I've tested the following code and it works:
+#     :inoremap \<Tab> <C-r>=( feedkeys("\\\t", "in") ? '' : '')<cr>
+#     (to avoid repeating the null string, if that's somehow undesirable, we can force the ternary conditional operator to always evaluate one side (truthy, in our case))
+#     :inoremap \<Tab> <C-r>=( feedkeys("\\\t", "in") || 1 ? '' : 0)<cr>
+#    NOTE: it might also be available through the ':inoremap <expr>', but I'm not sure how backwards-compatible that is
+#    NOTE: do this (for now), only when snipmate is active, and even then we'd need to make sure that we would only "patch" this behaviour for specific 'filetype's, when certain variables are set, etc.
+#    NOTE: *important* [2022.12.23 21:11:21] editing a new file without this "fix snippet" and without the "inoremap" above seemed to work as I'd expect it to (correctly), so I don't know what's happening now
+#? IDEA: try to make snipmate ignore the <backslash><tab>, so the (main) editor (or another plugin) gets the key sequence instead.
 #+ snippet! \ "Fix: backslash-tab expanded to just that"
-#+ 	\\	
-snippet! \ "Fix: backslash-tab expanded to just that"
-	\\	
+#+ prev: v1:	\\{there_was_a_trailing_tab_but_got_deleted_by_vim_because_of_cfg_from_editorconfig}
+#+ prev: v2:	`evplg#snippets#baselib#valcommon#getesc('\\') . evplg#snippets#baselib#valcommon#getesc('t')`
+#+ prev: v3: snippet! \ "Fix: backslash-tab expanded to just that"
+#+ prev: v3: 	\\`evplg#snippets#baselib#valcommon#getesc('t')`
 
