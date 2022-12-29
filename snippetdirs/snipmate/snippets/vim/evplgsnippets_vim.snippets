@@ -6,6 +6,9 @@
 # NOTE: features not known to work on ultisnips:
 #  * '${VISUAL}'
 # TODO: create an ultisnips "port" of every snippet in this file
+#  IDEA: snippets that would work on both parsers to a unified 'snipmate-compat' file, where the version is not assumed
+#   IDEA: for snipmate (and other compatible plugins?), we could detect the 'byparserversion/v1' (sub)directory, and add it to '&runtimepath' if 'g:snipMate.snippet_version == 1' (check ':h SnipMate-options', ':h SnipMate-parser-versions'))
+#   IDEA: for ultisnips, we could detect the subdirectory 'byparserversion/lcd' (or 'compat') ('lcd': "lowest common denominator")
 version 1
 
 #+ snippet fun "function (long keywords)"
