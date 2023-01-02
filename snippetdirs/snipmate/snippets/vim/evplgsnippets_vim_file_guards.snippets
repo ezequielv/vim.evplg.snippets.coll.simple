@@ -1,0 +1,52 @@
+# NOTE: keyword is [snipmate-only]
+version 1
+
+#  " inclusion control
+#  if exists( "g:sgroups_spost_cscore_10_ev_gen" ) || ( exists( "g:sgroups_cscore_ev_gen_disable" ) && g:sgroups_cscore_ev_gen_disable )
+#  	finish
+#  endif
+#  " for inclusion control
+#  let g:sgroups_spost_cscore_10_ev_gen = 1
+
+snippet guard_ev_std file-level "if" guard [standard] [smart]
+	`evplg#snippets#scope#vim#keyword('if')` exists( '${1:g:sourceproc_}${2:`evplg#snippets#scope#vim#get_symbol_base_for_buffer()`}${3:_done}' )${4: || &${5:cp}}${6: || ${7}version < ${8:700}}
+		`evplg#snippets#scope#vim#keyword('finish')`
+	`evplg#snippets#scope#vim#keyword('endif')`
+	let $1$2$3 = 1
+	${0}
+
+#+ prev: v1: `evplg#snippets#scope#vim#keyword('if')` exists( '${1:g:sourceproc_}${2:`evplg#snippets#scope#vim#bufexpr_to_symbol()`}${3:_done}' )${4: || &${5:cp}}${6: || ${7}version < ${8:700}}
+snippet guard_ev_full file-level "if" guard [full] [smart]
+	`evplg#snippets#scope#vim#keyword('if')` exists( '${1:g:sourceproc_}${2:`evplg#snippets#scope#vim#get_symbol_base_for_buffer()`}${3:_done}' )${4: || ( exists( '${5:$1}${6:$2}${7:_disable}' ) && $5$6$7 )}${8: || &${9:cp}}${10: || ${11}version < ${12:700}}
+		`evplg#snippets#scope#vim#keyword('finish')`
+	`evplg#snippets#scope#vim#keyword('endif')`
+	let $1$2$3 = 1
+	${0}
+
+#  " force "compatibility" mode {{{
+#  if &cp | set nocp | endif
+#  " set standard compatibility options ("Vim" standard)
+#  let s:cpo_save=&cpo
+#  set cpo&vim
+#  " }}}
+snippet block_set_nocompatible_begin force set 'nocp' (and save '&cpo') -- begin
+	" force "compatibility" mode {{{
+	`evplg#snippets#scope#vim#keyword('if')` &${1:compatible} | `evplg#snippets#scope#vim#keyword('set')` no$1 | `evplg#snippets#scope#vim#keyword('endif')`
+	" set standard compatibility options ("Vim" standard)
+	let s:cpo_save = &cpo${2:ptions}
+	set cpo$2&vim
+	" }}}
+	${0}
+
+#  " restore old "compatibility" options {{{
+#  let &cpo=s:cpo_save
+#  unlet s:cpo_save
+#  " }}}
+snippet block_set_nocompatible_end restore '&cpoptions' -- end
+	" restore previously saved "compatibility" options {{{
+	let &cpo${1:ptions} = s:cpo_save
+	unlet s:cpo_save
+	" }}}
+	${0}
+
+# end

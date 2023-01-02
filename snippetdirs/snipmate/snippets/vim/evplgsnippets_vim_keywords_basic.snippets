@@ -102,7 +102,8 @@ snippet! exe execute command (smart)
 #+ # NOTE: maybe use vim script (ex) code to emulate pressing <tab>
 #+ #  IDEA: install (in a 'post' script): a 'inoremap' to '<backslash><tab>' to expand to the same, only if the key to expand is indeed <tab>
 #+ snippet! \ "Fix: backslash-tab expanded to just that"
-#+ 	\\	
+#+ v1:	\\	
+#+ v2:	\\`feedkeys("\\<Backspace>\\<Tab>", "n")`
 snippet! \ "Fix: backslash-tab expanded to just that"
-	\\	
+	`feedkeys("\\<Backspace>\\\\\\<Tab>", "n")`
 
