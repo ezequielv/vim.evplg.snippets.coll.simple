@@ -23,3 +23,22 @@ snippet snippets_test_multi5 test: multi-line expansion (#5) using esc(n)
 	${1:first} line: `join(['line1','line2','line3','line4'], evplg#snippets#baselib#valcommon#getesc('n'))` <- after last line
 	second field: ${2:second}
 
+snippet snippets_test_multi6 test: multiple tab stops [snipmate]
+	${1:first} -- dollar_1: [$1]
+	${2:second} -- dollar_2: [$2]
+	dollar_3: $3
+	and dollar_3 placeholder: ${3:third}
+	end
+
+snippet snippets_test_multi7 test: nested tab stops (outer, inner)
+	this is the outer expansion: ${1:outer prefix ${2:inner }outer suffix}
+	dollar_1: [$1]
+	dollar_2: [$2]
+	# 2021.07.29: snipmate [w] ultisnips [x]
+
+snippet snippets_test_multi8 test: nested tab stops (inner, outer)
+	this is the outer expansion: ${2:outer prefix ${1:inner }outer suffix}
+	dollar_1: [$1]
+	dollar_2: [$2]
+	# 2021.07.29: snipmate [w] ultisnips [x]
+
