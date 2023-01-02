@@ -41,6 +41,8 @@ let s:local_keywordflavours_dict_group01_short = {
 			\		'finally': 'fina',
 			\		'throw': 'th',
 			\
+			\		'finish': 'fini',
+			\
 			\		'echo': 'ec',
 			\		'echon': 'echon',
 			\		'echohl': 'echoh',
@@ -117,7 +119,7 @@ let s:local_keyworddetection_proclist = [
 			\				},
 			\		},
 			\		{
-			\			'search_regex': '\v^\s*<%((%(en%[di])|%(el%[s])|elsei|endfo|%(con%[tinu])|brea|%(wh%[il])|%(endw%[hil]))|(endif|else|elseif|endfor|continue|break|while|endwhile))>',
+			\			'search_regex': '\v^\s*<%((%(en%[di])|%(el%[s])|elsei|endfo|%(con%[tinu])|brea|%(wh%[il])|%(endw%[hil])|%(fini%[s]))|(endif|else|elseif|endfor|continue|break|while|endwhile|finish))>',
 			\			'search_keywords_dict_map': {
 			\					2: s:local_keywordflavours_dict_group01_short,
 			\					3: s:local_keywordflavours_dict_group01_long,
