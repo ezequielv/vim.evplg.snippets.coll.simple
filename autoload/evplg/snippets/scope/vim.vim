@@ -249,6 +249,205 @@ function! evplg#snippets#scope#vim#get_default_function_prefix()
 				\	)
 endfunction
 
+" NOTE: see function evplg#snippets#scope#vim#bufexpr_to_symbol() for
+" information on the supported dictionary elements.
+"
+let s:bufexpr_to_symbol_transform_dict_list =
+			\	[
+			\	]
+
+" TODO: move to a language-agnostic file (and use the language-specific
+" functions (such as evplg#snippets#scope#vim#get_symbol_base_for_buffer())
+" from snippets).
+"
+" prev: evplg#snippets#scope#vim#get_include_guard_symbol() abort
+" optional args:
+"  * bufexpr (string, default: '%')
+"  * list_transform_pre (list of dict, default: empty)
+"  * list_transform_post (list of dict, default: empty)
+"
+" TODO: document the dictionary elements supported format.
+function! evplg#snippets#scope#vim#bufexpr_to_symbol( ... ) abort
+	call evplg#snippets#scope#vim#init_lazy()
+
+	let l:retval_none = ''
+
+	let l:bufexpr = get( a:000, 0, '%' )
+	let l:transform_dict_list_pre = get( a:000, 1, [] )
+	let l:transform_dict_list_post = get( a:000, 2, [] )
+
+	" only allocate a temporary list when using specified "custom" dictionary
+	" list(s).
+	"+ prev: v1: let l:transform_dict_list =
+	"+ prev: v1: 			\	(	( empty( l:transform_dict_list_pre ) && empty( l:transform_dict_list_post ) )
+	"+ prev: v1: 			\		?	s:bufexpr_to_symbol_transform_dict_list
+	"+ prev: v1: 			\		:	( l:transform_dict_list_pre + s:bufexpr_to_symbol_transform_dict_list + l:transform_dict_list_post )
+	"+ prev: v1: 			\	)
+	let l:transform_dict_list = evlib#stdtype#ExtendInOrderOrGetRef(
+				\		[
+				\			l:transform_dict_list_pre,
+				\			s:bufexpr_to_symbol_transform_dict_list,
+				\			l:transform_dict_list_post,
+				\		]
+				\	)
+
+	for l:pathname_transform_dict in l:transform_dict_list
+		let l:symbol = ""
+
+		let l:fname_part = get( l:pathname_transform_dict, 'fname_part', 'basename' )
+		let l:fnamemod_flags = ''
+		if l:fname_part ==# 'basename'
+			let l:fnamemod_flags = ':t'
+		elseif l:fname_part ==# 'full'
+			let l:fnamemod_flags = ':p'
+		else
+			" TODO: throw
+		endif
+		if empty( l:fnamemod_flags )
+			continue " prev: return l:retval_none
+		endif
+
+		" prev: let l:pathname = expand( '%' . l:fnamemod_flags )
+		let l:pathname = fnamemodify( bufname( l:bufexpr ), l:fnamemod_flags )
+		if empty( l:pathname )
+			continue " prev: return l:retval_none
+		endif
+
+		let l:match_regex = get( l:pathname_transform_dict, 'match_regex', '' )
+		if ( ! empty( l:match_regex ) )
+			let l:match_str = matchstr( l:pathname, l:match_regex )
+			if empty( l:match_str )
+				continue " prev: return l:retval_none
+			endif
+			let l:match_subst_expr = get( l:pathname_transform_dict, 'match_subst', '' )
+			if ( ! empty( l:match_subst_expr ) )
+				let l:symbol = substitute( l:pathname, l:match_regex, l:match_subst_expr, 'g' )
+			endif
+		" NOTE: other matching criteria: elseif ( ... )
+		endif
+		if ( ! empty( l:symbol ) )
+			break
+		endif
+	endfor
+	if empty( l:symbol )
+		return l:retval_none
+	endif
+	" sanitise calculated symbol name
+	" prev: v1:\		[ '\v^', 'sourceproc_' ],
+	" prev: v1:\		[ '\v$', '_included' ],
+	" prev: v1:\		[ '\v^%([g]:)@<!', 'g:' ],
+	for [ l:match_regex, l:match_subst_expr ] in
+				\	[
+				\		[ '\v(_){2,}', '\1' ],
+				\		[ '\v[^a-zA-Z0-9_]', '_' ],
+				\	]
+		let l:symbol = substitute( l:symbol, l:match_regex, l:match_subst_expr, 'g' )
+	endfor
+	return l:symbol
+endfunction
+
+let s:bufexpr_to_symbol_vim_transform_dict_list =
+			\	[
+			\		{
+			\			'match_regex': '\v^([a-z][^\.]*)%(\..*)?$',
+			\			'match_subst': '\1',
+			\		},
+			\	]
+
+" optional args:
+"  * varname_base : varname to use instead of the default
+"  * imp_a_000 : array with arguments to be passed (expanded) to the
+"    implemenetation function 'evplg#snippets#scope#vim#bufexpr_to_symbol()'.
+"    NOTE: arguments can be used as "additional" data to calculated values
+"    inside this function.
+function! evplg#snippets#scope#vim#bufexpr_to_symbol_wrapper( ... ) abort
+	"+? prev: v3: let l:varname_pref_noscope = get( a:000, 0, 'evplg_snippets_scope_vim_' . 'buftosym_' . 'transform_dict_list' )
+	let l:varname_pref_noscope = get( a:000, 0, '' )
+	" TODO: validate l:varname_pref_noscope (valid id? or just non-empty?)
+	if empty( l:varname_pref_noscope ) || ( l:varname_pref_noscope =~ '\v[\*\=]' )
+		let l:varname_pref_noscope = 'evplg_snippets_scope_vim_' . 'buftosym_' . 'transform_dict_list'
+	endif
+
+	let l:null_list = []
+
+	"+? prev: v1: let l:wrapped_args_list = [ '%', l:null_list, l:null_list ]
+	let l:wrapped_args_list = copy( get( a:000, 1, [] ) )
+	call evlib#stdtype#ListSetDefaultElements( l:wrapped_args_list, [ '%', l:null_list, l:null_list ] )
+
+	" example final varnames: (TODO: complete)
+	"  evplg_snippets_scope_vim_buftosym_transform_dict_list_pre
+	"  evplg_snippets_scope_vim_buftosym_transform_dict_list
+	"  evplg_snippets_scope_vim_buftosym_transform_dict_list_post
+	for [ l:wrapped_argidx, l:varname_suff ] in [
+				\		[ 1, '_pre' ],
+				\		[ 1, '' ],
+				\		[ 1, s:bufexpr_to_symbol_vim_transform_dict_list ],
+				\		[ 2, '_post' ],
+				\	]
+		"+ prev: v1: let l:varname_now = l:varname_pref_noscope . l:varname_suff
+		"+ prev: v1: let l:wrapped_args_list[ l:wrapped_argidx ] = evlib#stdtype#ExtendInOrderOrGetRef(
+		"+ prev: v1: 			\		[
+		"+ prev: v1: 			\			l:wrapped_args_list[ l:wrapped_argidx ],
+		"+ prev: v1: 			\			get( b:, l:varname_now, l:null_list ),
+		"+ prev: v1: 			\			get( g:, l:varname_now, l:null_list ),
+		"+ prev: v1: 			\		]
+		"+ prev: v1: 			\	)
+		if type( l:varname_suff ) == type( '' )
+			let l:varname_now = l:varname_pref_noscope . l:varname_suff
+		endif
+		"? prev: v2: let l:wrapped_args_list[ l:wrapped_argidx ] = evlib#stdtype#ExtendInOrderOrGetRef(
+		"? prev: v2: 			\		[
+		"? prev: v2: 			\			l:wrapped_args_list[ l:wrapped_argidx ],
+		"? prev: v2: 			\		]
+		"? prev: v2: 			\			+
+		"? prev: v2: 			\			(	( type( l:varname_suff ) == type( l:null_list ) )
+		"? prev: v2: 			\				?	[ l:varname_suff ]
+		"? prev: v2: 			\				:	[
+		"? prev: v2: 			\						get( b:, l:varname_now, l:null_list ),
+		"? prev: v2: 			\						get( g:, l:varname_now, l:null_list ),
+		"? prev: v2: 			\					]
+		"? prev: v2: 			\			)
+		"? prev: v2: 			\	)
+		"-? prev: v3: let l:wrapped_args_list[ l:wrapped_argidx ] = evlib#stdtype#ExtendInOrderOrGetRef(
+		"-? prev: v3: 			\		[
+		"-? prev: v3: 			\			l:wrapped_args_list[ l:wrapped_argidx ],
+		"-? prev: v3: 			\			(	( type( l:varname_suff ) == type( l:null_list ) )
+		"-? prev: v3: 			\				?	l:varname_suff
+		"-? prev: v3: 			\				:	l:null_list
+		"-? prev: v3: 			\			),
+		"-? prev: v3: 			\			"-? get( b:, l:varname_now, l:null_list ),
+		"-? prev: v3: 			\			"-? get( g:, l:varname_now, l:null_list ),
+		"-? prev: v3: 			\		]
+		"-? prev: v3: 			\	)
+		let l:wrapped_args_list[ l:wrapped_argidx ] = evlib#stdtype#ExtendInOrderOrGetRef(
+					\		[
+					\			l:wrapped_args_list[ l:wrapped_argidx ],
+					\		]
+					\			+
+					\			(	( type( l:varname_suff ) == type( l:null_list ) )
+					\				?	[ l:varname_suff ]
+					\				:	[
+					\						get( b:, l:varname_now, l:null_list ),
+					\						get( g:, l:varname_now, l:null_list ),
+					\					]
+					\			)
+					\	)
+		unlet! l:varname_suff l:varname_now
+	endfor
+	return call( 'evplg#snippets#scope#vim#bufexpr_to_symbol', l:wrapped_args_list )
+endfunction
+
+"+/-? ... function! evplg#snippets#scope#vim#get_include_guard_symbol() abort
+"+/-? ... 	return evplg#snippets#scope#vim#bufexpr_to_symbol(
+"+/-? ... 				\		'%',
+"+/-? ... 				\		[],
+"+/-? ... 				\	)
+"+/-? ... endfunction
+"+ prev: v1: function! evplg#snippets#scope#vim#get_include_guard_symbol() abort
+function! evplg#snippets#scope#vim#get_symbol_base_for_buffer() abort
+	return evplg#snippets#scope#vim#bufexpr_to_symbol_wrapper()
+endfunction
+
 function! evplg#snippets#scope#vim#keyword( keyword )
 	call evplg#snippets#scope#vim#init_lazy()
 	return get(
