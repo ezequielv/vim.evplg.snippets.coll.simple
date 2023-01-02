@@ -241,9 +241,10 @@ endfunction
 
 function! evplg#snippets#scope#vim#get_default_function_prefix()
 	call evplg#snippets#scope#vim#init_lazy()
+	let l:autoload_funcbasename = matchstr( expand( '%:p' ), '\v/autoload/\zs.*\ze\.vim$' )
 	return (
-				\		( expand('%:p') =~ '\v<autoload/' )
-				\			?	substitute(matchstr(expand('%:p'),'\v<autoload/\zs.*\ze\.vim$'),'[/\\]','#','g').'#'
+				\		! empty( l:autoload_funcbasename )
+				\			?	( substitute( l:autoload_funcbasename, '[/\\]\+', '#', 'g' ) . '#' )
 				\			:	''
 				\	)
 endfunction
