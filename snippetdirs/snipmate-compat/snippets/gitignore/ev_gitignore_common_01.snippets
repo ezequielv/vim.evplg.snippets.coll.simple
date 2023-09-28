@@ -1,0 +1,32 @@
+
+snippet dir_enable_include_somefiles ev_gitignore: exclude all files in (sub)dir, include specific files only
+	!${1:/}${2:(sub)directory(/ies)}/
+	$1$2/*
+	!$1$2/${3:filespec_to_include}
+	$1$2/${4:filespec_to_exclude_otherwise_included_by_previous_line}${0}
+	
+snippet dir_include_somefiles include specific files only (previous exclusions are assumed)
+	!${1:/}${2:(sub)directory(/ies)}/${3:filespec_to_include}
+	$1$2/${4:filespec_to_exclude_otherwise_included_by_previous_line}${0}
+	
+# [fix_ultisnips_removeblankatend]
+#  vim macro to create another level (invoke from line below the '!' one):
+#   NOTE: "vim keys" line below has two <C-a>, and one <Esc> as the last character
+#   vim keys (normal mode, usually put in a register and invoked with '@<register>'):
+#    k^f{F!yyjp$F/f$y$$pT:eT{yypxA*
+snippet dir_exclude_dirs_upto_7 setup exclusions up to the specified subdirectory (up to 7 levels deep)
+	!${1:/}${2:subdir1}/
+	${1:/}${2:subdir1}/*
+	!${1:/}${2:subdir1}/${3:subdir2}/
+	${1:/}${2:subdir1}/${3:subdir2}/*
+	!${1:/}${2:subdir1}/${3:subdir2}/${4:subdir3}/
+	${1:/}${2:subdir1}/${3:subdir2}/${4:subdir3}/*
+	!${1:/}${2:subdir1}/${3:subdir2}/${4:subdir3}/${5:subdir4}/
+	${1:/}${2:subdir1}/${3:subdir2}/${4:subdir3}/${5:subdir4}/*
+	!${1:/}${2:subdir1}/${3:subdir2}/${4:subdir3}/${5:subdir4}/${6:subdir5}/
+	${1:/}${2:subdir1}/${3:subdir2}/${4:subdir3}/${5:subdir4}/${6:subdir5}/*
+	!${1:/}${2:subdir1}/${3:subdir2}/${4:subdir3}/${5:subdir4}/${6:subdir5}/${7:subdir6}/
+	${1:/}${2:subdir1}/${3:subdir2}/${4:subdir3}/${5:subdir4}/${6:subdir5}/${7:subdir6}/*
+	!${1:/}${2:subdir1}/${3:subdir2}/${4:subdir3}/${5:subdir4}/${6:subdir5}/${7:subdir6}/${8:subdir7}/
+	${1:/}${2:subdir1}/${3:subdir2}/${4:subdir3}/${5:subdir4}/${6:subdir5}/${7:subdir6}/${8:subdir7}/*
+# [fix_ultisnips_removeblankatend]
