@@ -1,0 +1,118 @@
+# NOTE: usually used with the 'bbcode' (syntax-only) plugin
+
+# TODO: continue (tested with snipmate and UltiSnips)
+
+snippet [b "bold [b]..[/b]"
+	[b]${1:${VISUAL:bold text}}[/b]${0}
+# force end-of-snippet
+
+snippet [i "italics [i]..[/i]"
+	[i]${1:${VISUAL:italics text}}[/i]${0}
+# force end-of-snippet
+
+snippet [u "underlined [u]..[/u]"
+	[u]${1:${VISUAL:underlined text}}[/u]${0}
+# force end-of-snippet
+
+# FIXME: expanding the string after the preceding '=' (in '[color=]') does not seem to work as you'd like (tested on ultisnips)
+# TODO: define this in a function somewhere, so we can have snippets made of just a function call to vim code
+#  (even the function argument could be deduced from the snippet "trigger", if possible)
+#? prev: [color=${1:value. use 'cn_' for a colour name snippets; 'cv' for colour value}]${2:${VISUAL:coloured text}}[/color]${0}
+#? prev: [color=${1}]${2:${VISUAL:coloured text}}[/color]${0}
+# ref: this *does* work on ultisnips and snipmate!: [color=${1}]${2:${VISUAL:coloured text}}`strftime('%Y.%m.%d')`[/color]${0}
+# prev: v1: snippet [color "color [color]..[/color]"
+# prev: v2: snippet [c "color [color]..[/color]"
+snippet [color "color [color]..[/color]"
+	[color=${1}]${2:${VISUAL:coloured text}}[/color]${0}
+# force end-of-snippet
+
+snippet cv "colour value notation: #RRGGBB"
+	#${1:${VISUAL:RRGGBB}}
+# force end-of-snippet
+
+#-? snippet cn "prefix for all colour names snippets"
+#-? 	${1:cn-}${0}
+#-? # force end-of-snippet
+
+#? # colours (TODO: use a macro to generate) {{{
+#? snippet cn_blue "colour: blue"
+#? 	blue
+#? # }}}
+
+snippet [size "size [size]..[/size]"
+	[size=${1:percentage_no_percent_sign}]${2:${VISUAL:text}}[/size]${0}
+# force end-of-snippet
+
+snippet [q "quote (multiline) [quote]..[/quote]"
+	[quote]
+	${1:${VISUAL:quoted text}}
+	[/quote]
+	
+	${0}
+# force end-of-snippet
+
+snippet [q= "quote (multiline) [quote='']..[/quote]"
+	[quote="${1:quoted person name/id}"]
+	${2:${VISUAL:quoted text}}
+	[/quote]
+	
+	${0}
+# force end-of-snippet
+
+# prev: v1: snippet [code "code [code]..[/code]"
+# prev: v2: snippet [c "code [code]..[/code]"
+snippet [code_inline "code [code]..[/code]"
+	[code]${1:${VISUAL:monospaced, formatting-ignored text}}[/code]${0}
+# force end-of-snippet
+
+snippet [code_multiline "code (multiline) [code]..[/code]"
+	[code]
+	${1:${VISUAL:monospaced, formatting-ignored text}}
+	[/code]
+	
+	${0}
+# force end-of-snippet
+
+# prev: ${1:[*] ${2:${VISUAL:item text}}}${0}
+snippet [l "list [list]..[/list]"
+	[list${1:=id where id: 1 (1, 2, 3, ...), a (a, b, c, ...), A (A, B, C, ...), i (i, ii, iii, ...), I (I, II, III, ...)}]
+	[*] ${2:${VISUAL:item text}}
+	[*${0}
+	[/list]
+# force end-of-snippet
+
+snippet [* "list item (repeated) [*]"
+	[*] ${1:${VISUAL:item text}}
+	[*${0}
+# force end-of-snippet
+
+snippet * "list item (single) [*]"
+	[*] ${1:${VISUAL:item text}}
+# force end-of-snippet
+
+# disambiguations {{{
+
+# [colour, [code
+# ]]
+snippet [c "[code (disambiguation)"
+	[code
+# force end-of-snippet
+
+# }}}
+
+# shortcuts {{{
+
+snippet b "bold (shortcut) -> [b"
+	[b
+# force end-of-snippet
+
+snippet i "italics (shortcut) -> [i"
+	[i
+# force end-of-snippet
+
+snippet u "underlined (shortcut) -> [u"
+	[u
+# force end-of-snippet
+
+# }}}
+
